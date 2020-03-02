@@ -76,6 +76,7 @@ public class Venta {
     
     private void quitarItem(){
         detalles.remove(ULTIMO);
+        ULTIMO--;
     }
     
     public void agregarItemUltimo(){
@@ -84,13 +85,14 @@ public class Venta {
         }
     }
     
-    public void quitarItemUltimo(){
+    public int quitarItemUltimo(){
         if(ULTIMO >= 0){
             detalles.get(ULTIMO).quitar();
             if(detalles.get(ULTIMO).getCantidad() == 0){
                 quitarItem();
             }
         }
+        return detalles.size();
     }
     
     public double calcularTotal(){
@@ -105,5 +107,12 @@ public class Venta {
         return detalles.get(ULTIMO).total();
     }
     
+    public boolean estaVacia(){
+        return detalles.isEmpty();
+    }
+    
+    public DetalleVenta getUltimo(){
+        return detalles.get(ULTIMO);
+    }
     
 }
