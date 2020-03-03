@@ -6,9 +6,11 @@
 package Views;
 
 import Classes.DetalleVenta;
+import Classes.ManejadorBD;
 import Classes.Producto;
 import Classes.Usuario;
 import Classes.Venta;
+import Interfaces.AdministrarDatos;
 import Interfaces.ManageAyuda;
 import java.util.ArrayList;
 import java.util.Date;
@@ -19,32 +21,34 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author ja-za
  */
-public class Principal extends javax.swing.JFrame implements ManageAyuda{
+public class Principal extends javax.swing.JFrame implements ManageAyuda, AdministrarDatos {
 
     private DefaultTableModel model;
     private ArrayList<Producto> productos;
     private Venta venta;
     private Usuario vendedor;
+    private ManejadorBD manejador;
+
     /**
      * Creates new form Principal
+     *
+     * @param currentUser
      */
-    public Principal() {
+    public Principal(Usuario currentUser) {
         model = new DefaultTableModel(new Object[]{"Clave", "Descripción", "Precio unitario", "Cantidad", "Total"}, 0);
         initComponents();
         
         productos = new ArrayList<>();
-        productos.add(new Producto(111, "Leche", 15));
-        productos.add(new Producto(112, "Huevo", 35));
-        productos.add(new Producto(113, "Azucar", 25));
-        productos.add(new Producto(114, "Tortillas", 21));
-        productos.add(new Producto(115, "Pan", 10));
-        
-        vendedor = new Usuario("Vendedor1", "123", 1);
+
+        vendedor = currentUser;
         venta = new Venta(new Date(), vendedor, new ArrayList<>());
         btnVender.setEnabled(false);
-        
-        lblVendedor.setText("Vendedor: "+vendedor.getNombre());
-        
+
+        lblVendedor.setText("Vendedor: " + vendedor.getNombre());
+        manejador = new ManejadorBD(this);
+
+        manejador.consultarProductos();
+
         setLocationRelativeTo(null);
     }
 
@@ -94,6 +98,11 @@ public class Principal extends javax.swing.JFrame implements ManageAyuda{
 
         btnAdministrar.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         btnAdministrar.setText("Administrar");
+        btnAdministrar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAdministrarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -145,58 +154,83 @@ public class Principal extends javax.swing.JFrame implements ManageAyuda{
         String texto = txtClave.getText();
         int cantidad;
         txtClave.setText("");
-        if(texto.replace(" ", "").length() == 1){
-            if(texto.equals("?")){
+        if (texto.replace(" ", "").length() == 1) {
+            if (texto.equals("?")) {
                 //Desplegar ayuda
                 new Ayuda(this, productos).setVisible(true);
-            }else  if(!venta.estaVacia()){
-                model.removeRow(model.getRowCount()-1);
-                if(texto.equals("-")){
+            } else if (!venta.estaVacia()) {
+                model.removeRow(model.getRowCount() - 1);
+                if (texto.equals("-")) {
                     cantidad = venta.getDetalles().size();
-                    if(venta.quitarItemUltimo() == cantidad){
+                    if (venta.quitarItemUltimo() == cantidad) {
                         DetalleVenta detalle = venta.getUltimo();
                         Producto p = detalle.getProducto();
                         model.addRow(new Object[]{p.getClave(), p.getDescripcion(), p.getPrecio(), detalle.getCantidad(), venta.calcularTotalUltimo()});
                     }
-                }else  if(texto.equals("+")){
-                    venta.agregarItemUltimo();
-                    DetalleVenta detalle = venta.getUltimo();
-                    Producto p = detalle.getProducto();
-                    model.addRow(new Object[]{p.getClave(), p.getDescripcion(), p.getPrecio(), detalle.getCantidad(), venta.calcularTotalUltimo()});
+                } else if (texto.equals("+")) {
+                    if (venta.getUltimo().getProducto().getCantidad() > 0) {
+                        venta.agregarItemUltimo();
+                        DetalleVenta detalle = venta.getUltimo();
+                        Producto p = detalle.getProducto();
+                        model.addRow(new Object[]{p.getClave(), p.getDescripcion(), p.getPrecio(), detalle.getCantidad(), venta.calcularTotalUltimo()});
+                        venta.getUltimo().getProducto().setCantidad(venta.getUltimo().getProducto().getCantidad()-1);
+                    } else {
+                        DetalleVenta detalle = venta.getUltimo();
+                        Producto p = detalle.getProducto();
+                        model.addRow(new Object[]{p.getClave(), p.getDescripcion(), p.getPrecio(), detalle.getCantidad(), venta.calcularTotalUltimo()});
+                        JOptionPane.showMessageDialog(this, "Ya no hay productos en inventario");
+                    }
                 }
             }
-        } else if(texto.length() > 1){
-            for(int i = 0; i < model.getRowCount(); i++){
-                if(((Integer)model.getValueAt(i, 0)) == Integer.parseInt(texto)){
-                    JOptionPane.showMessageDialog(this, "Ya existe ese articulo en la lista");
-                    return;
+        } else if (texto.length() > 1) {
+            for (int i = 0; i < model.getRowCount(); i++) {
+                try {
+                    if (((Integer) model.getValueAt(i, 0)) == Integer.parseInt(texto)) {
+                        JOptionPane.showMessageDialog(this, "Ya existe ese articulo en la lista");
+                        return;
+                    }
+                } catch (NumberFormatException ex) {
+
                 }
             }
             productos.forEach((p) -> {
-                try{
-                    if(p.getClave() == Integer.parseInt(texto)){
-                        venta.agregarItem(p, 1);
-                        model.addRow(new Object[]{p.getClave(), p.getDescripcion(), p.getPrecio(), "1", venta.calcularTotalUltimo()});
+                try {
+                    if (p.getClave() == Integer.parseInt(texto)) {
+                        if (p.getCantidad() > 0) {
+                            venta.agregarItem(p, 1);
+                            model.addRow(new Object[]{p.getClave(), p.getDescripcion(), p.getPrecio(), "1", venta.calcularTotalUltimo()});
+                            venta.getUltimo().getProducto().setCantidad(venta.getUltimo().getProducto().getCantidad()-1);
+                        } else {
+                            JOptionPane.showMessageDialog(this, "Ya no hay productos en inventario");
+                        }
                     }
-                }catch(NumberFormatException ex){
+                } catch (NumberFormatException ex) {
                     JOptionPane.showMessageDialog(this, "Ingresa una clave de producto valida");
                 }
             });
         }
-        
+
         btnVender.setEnabled(!venta.estaVacia());
-        
-        lblTotal.setText("Total: $"+venta.calcularTotal());
+
+        lblTotal.setText("Total: $" + venta.calcularTotal());
     }//GEN-LAST:event_txtClaveActionPerformed
 
     private void btnVenderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVenderActionPerformed
-        while(model.getRowCount() > 0)
+        while (model.getRowCount() > 0) {
             model.removeRow(0);
+        }
+        lblTotal.setText("Total: $0.0");
         //Se registra una venta
+        manejador.insertarVenta(venta);
+        venta = new Venta(new Date(), vendedor, new ArrayList<>());
         JOptionPane.showMessageDialog(this, "Venta registrada");
     }//GEN-LAST:event_btnVenderActionPerformed
 
-    
+    private void btnAdministrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAdministrarActionPerformed
+        new Administracion(vendedor).setVisible(true);
+        setVisible(false);
+    }//GEN-LAST:event_btnAdministrarActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdministrar;
@@ -210,8 +244,13 @@ public class Principal extends javax.swing.JFrame implements ManageAyuda{
 
     @Override
     public void setProducto(int p) {
-        txtClave.setText(""+productos.get(p).getClave());
+        txtClave.setText("" + productos.get(p).getClave());
         txtClaveActionPerformed(null);
+    }
+
+    @Override
+    public void insertar(Object p) {
+        productos.add((Producto) p);
     }
 
 }

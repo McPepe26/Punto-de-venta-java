@@ -52,6 +52,10 @@ public class Venta {
     public String getFechaToString() {
         return new SimpleDateFormat("dd-MM-yyyy").format(fecha);
     }
+    
+    public String getFechaToStringSql() {
+        return new SimpleDateFormat("MM-dd-yyyy").format(fecha);
+    }
 
     public Usuario getVendedor() {
         return vendedor;

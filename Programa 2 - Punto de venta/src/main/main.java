@@ -5,6 +5,7 @@
  */
 package main;
 
+import Views.Login;
 import Views.Principal;
 
 /**
@@ -17,7 +18,7 @@ public class main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        new Principal().setVisible(true);
+        new Login(null).setVisible(true);
     }
     
 }

@@ -13,16 +13,27 @@ public class Producto {
     private int clave;
     private String descripcion;
     private double precio;
+    private int cantidad;
 
-    public Producto(int clave, String descripcion, double precio) {
+    public Producto(int clave, String descripcion, double precio, int cantidad) {
         this.clave = clave;
         this.descripcion = descripcion;
         this.precio = precio;
+        this.cantidad = cantidad;
     }
 
-    public Producto(String descripcion, double precio) {
+    public Producto(String descripcion, double precio, int cantidad) {
         this.descripcion = descripcion;
         this.precio = precio;
+        this.cantidad = cantidad;
+    }
+
+    public int getCantidad() {
+        return cantidad;
+    }
+
+    public void setCantidad(int cantidad) {
+        this.cantidad = cantidad;
     }
 
     public int getClave() {
