@@ -35,7 +35,7 @@ public class Usuarios extends javax.swing.JDialog implements AdministrarDatos {
         btnEliminar.setEnabled(false);
         btnCancelaBusqueda.setEnabled(false);
 
-        model = new DefaultTableModel(new Object[]{"Clave", "Nombre", "Contraseña", "Rol"}, 0);
+        model = new DefaultTableModel(new Object[]{"Clave", "Nombre", "Contraseña", "Rol", "Salario", "Comisión"}, 0);
         usuarios = new ArrayList<>();
         manejador = new ManejadorBD(this);
 
@@ -57,6 +57,8 @@ public class Usuarios extends javax.swing.JDialog implements AdministrarDatos {
         lbl2 = new javax.swing.JLabel();
         lbl3 = new javax.swing.JLabel();
         lbl4 = new javax.swing.JLabel();
+        lbl5 = new javax.swing.JLabel();
+        lbl6 = new javax.swing.JLabel();
         btnRegistrar = new javax.swing.JButton();
         btnConsultar = new javax.swing.JButton();
         btnModificar = new javax.swing.JButton();
@@ -65,6 +67,8 @@ public class Usuarios extends javax.swing.JDialog implements AdministrarDatos {
         txtClave = new javax.swing.JTextField();
         comboRoles = new javax.swing.JComboBox<>();
         txtContrasenia = new javax.swing.JPasswordField();
+        txtComision = new javax.swing.JTextField();
+        txtSalario = new javax.swing.JTextField();
         btnEliminar = new javax.swing.JButton();
         btnCancelaBusqueda = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
@@ -92,6 +96,12 @@ public class Usuarios extends javax.swing.JDialog implements AdministrarDatos {
         lbl4.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         lbl4.setText("Rol");
 
+        lbl5.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        lbl5.setText("Salario");
+
+        lbl6.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        lbl6.setText("Comision");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -107,7 +117,11 @@ public class Usuarios extends javax.swing.JDialog implements AdministrarDatos {
                             .addComponent(lbl2, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(lbl4)
-                        .addGap(0, 0, Short.MAX_VALUE))))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(lbl5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addContainerGap())
+                    .addComponent(lbl6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -120,7 +134,11 @@ public class Usuarios extends javax.swing.JDialog implements AdministrarDatos {
                 .addComponent(lbl3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(lbl4)
-                .addContainerGap(34, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(lbl5)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(lbl6)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         btnRegistrar.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
@@ -161,18 +179,41 @@ public class Usuarios extends javax.swing.JDialog implements AdministrarDatos {
 
         comboRoles.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccionar", "Administrador", "Vendedor" }));
 
+        txtComision.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtComision.setMinimumSize(new java.awt.Dimension(208, 23));
+        txtComision.setPreferredSize(new java.awt.Dimension(208, 23));
+        txtComision.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtComisionActionPerformed(evt);
+            }
+        });
+
+        txtSalario.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtSalario.setMinimumSize(new java.awt.Dimension(208, 23));
+        txtSalario.setPreferredSize(new java.awt.Dimension(208, 23));
+        txtSalario.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtSalarioActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(txtNombre, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(txtClave, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(comboRoles, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(txtContrasenia))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(txtNombre, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(txtClave, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(comboRoles, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(txtContrasenia))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(txtComision, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(txtSalario, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -185,7 +226,11 @@ public class Usuarios extends javax.swing.JDialog implements AdministrarDatos {
                 .addComponent(txtContrasenia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(7, 7, 7)
                 .addComponent(comboRoles, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(32, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(txtSalario, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txtComision, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         btnEliminar.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
@@ -204,7 +249,7 @@ public class Usuarios extends javax.swing.JDialog implements AdministrarDatos {
             }
         });
 
-        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Articulos en inventario"));
+        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Usuarios Registrados"));
 
         tblContenido.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -259,9 +304,7 @@ public class Usuarios extends javax.swing.JDialog implements AdministrarDatos {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(btnRegistrar, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -272,8 +315,10 @@ public class Usuarios extends javax.swing.JDialog implements AdministrarDatos {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnEliminar, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnCancelaBusqueda, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(22, 22, 22)
+                        .addComponent(btnCancelaBusqueda, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 16, Short.MAX_VALUE)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
@@ -319,6 +364,8 @@ public class Usuarios extends javax.swing.JDialog implements AdministrarDatos {
         txtNombre.setText(usuarioSeleccionado.getNombre());
         txtContrasenia.setText("" + usuarioSeleccionado.getContra());
         comboRoles.setSelectedIndex(usuarioSeleccionado.getRol() + 1);
+        txtComision.setText("" + usuarioSeleccionado.getComision());
+        txtSalario.setText(""+ usuarioSeleccionado.getSalario());
         btnModificar.setEnabled(true);
         btnEliminar.setEnabled(true);
         btnCancelaBusqueda.setEnabled(true);
@@ -327,6 +374,14 @@ public class Usuarios extends javax.swing.JDialog implements AdministrarDatos {
     private void btnCancelaBusquedaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelaBusquedaActionPerformed
         refrescarTabla();
     }//GEN-LAST:event_btnCancelaBusquedaActionPerformed
+
+    private void txtComisionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtComisionActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtComisionActionPerformed
+
+    private void txtSalarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSalarioActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtSalarioActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancelaBusqueda;
@@ -342,11 +397,15 @@ public class Usuarios extends javax.swing.JDialog implements AdministrarDatos {
     private javax.swing.JLabel lbl2;
     private javax.swing.JLabel lbl3;
     private javax.swing.JLabel lbl4;
+    private javax.swing.JLabel lbl5;
+    private javax.swing.JLabel lbl6;
     private javax.swing.JScrollPane panelTbl;
     private javax.swing.JTable tblContenido;
     private javax.swing.JTextField txtClave;
+    private javax.swing.JTextField txtComision;
     private javax.swing.JPasswordField txtContrasenia;
     private javax.swing.JTextField txtNombre;
+    private javax.swing.JTextField txtSalario;
     // End of variables declaration//GEN-END:variables
 
     public void refrescarTabla() {
@@ -362,6 +421,8 @@ public class Usuarios extends javax.swing.JDialog implements AdministrarDatos {
         txtClave.setText("");
         txtNombre.setText("");
         txtContrasenia.setText("");
+        txtComision.setText("");
+        txtSalario.setText("");
         
         btnModificar.setEnabled(false);
         btnEliminar.setEnabled(false);
@@ -389,8 +450,7 @@ public class Usuarios extends javax.swing.JDialog implements AdministrarDatos {
                     }
                     contra = String.copyValueOf(txtContrasenia.getPassword());
                     nombre = txtNombre.getText();
-                    return new Usuario(clave, nombre, contra, rol);
-
+                    return new Usuario(clave, nombre, contra, Double.parseDouble(txtSalario.getText()), rol == 1 ? Double.parseDouble(txtComision.getText()) : 0, rol);
                 } catch (NumberFormatException ex) {
                 }
             }
@@ -401,7 +461,7 @@ public class Usuarios extends javax.swing.JDialog implements AdministrarDatos {
     @Override
     public void insertar(Object p) {
         usuarios.add((Usuario) p);
-        model.addRow(new Object[]{((Usuario) p).getClave(), ((Usuario) p).getNombre(), ((Usuario) p).getContra(), ((Usuario) p).getRol()});
+        model.addRow(new Object[]{((Usuario) p).getClave(), ((Usuario) p).getNombre(), ((Usuario) p).getContra(), ((Usuario) p).getRol(), ((Usuario) p).getSalario(), ((Usuario) p).getComision()});
     }
 
 }

@@ -13,18 +13,24 @@ public class Usuario {
     private int clave;
     private String nombre;
     private String contra;
+    private double salario;
+    private double comision;
     private int rol;
 
-    public Usuario(int clave, String nombre, String contra, int rol) {
+    public Usuario(int clave, String nombre, String contra, double salario, double comision, int rol) {
         this.clave = clave;
         this.nombre = nombre;
         this.contra = contra;
+        this.salario = salario;
+        this.comision = comision;
         this.rol = rol;
     }
 
-    public Usuario(String nombre, String contra, int rol) {
+    public Usuario(String nombre, String contra, double salario, double comision, int rol) {
         this.nombre = nombre;
         this.contra = contra;
+        this.salario = salario;
+        this.comision = comision;
         this.rol = rol;
     }
 
@@ -58,5 +64,21 @@ public class Usuario {
 
     public void setRol(int rol) {
         this.rol = rol;
+    }
+
+    public double getSalario() {
+        return salario;
+    }
+
+    public void setSalario(double salario) {
+        this.salario = salario;
+    }
+
+    public double getComision() {
+        return comision;
+    }
+
+    public void setComision(double comision) {
+        this.comision = comision;
     }
 }

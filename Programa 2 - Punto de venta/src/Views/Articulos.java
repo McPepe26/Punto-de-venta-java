@@ -7,6 +7,7 @@ package Views;
 
 import Classes.ManejadorBD;
 import Classes.Producto;
+import Classes.Usuario;
 import Interfaces.AdministrarDatos;
 import java.util.ArrayList;
 import javax.swing.table.DefaultTableModel;
@@ -393,5 +394,6 @@ public class Articulos extends javax.swing.JDialog implements AdministrarDatos{
         productos.add((Producto)p);
         model.addRow(new Object[]{((Producto)p).getClave(), ((Producto)p).getDescripcion(), ((Producto)p).getPrecio(), ((Producto)p).getCantidad()});
     }
+
 
 }

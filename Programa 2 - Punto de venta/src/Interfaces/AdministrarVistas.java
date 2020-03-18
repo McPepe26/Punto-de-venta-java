@@ -5,12 +5,12 @@
  */
 package Interfaces;
 
-
+import java.awt.Component;
 
 /**
  *
  * @author ja-za
  */
-public interface AdministrarDatos {
-    void insertar(Object p);    
+public interface AdministrarVistas {
+    void mostrar(Component c);
 }

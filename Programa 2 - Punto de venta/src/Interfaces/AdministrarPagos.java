@@ -5,12 +5,14 @@
  */
 package Interfaces;
 
-
+import Classes.Usuario;
+import Classes.Venta;
 
 /**
  *
  * @author ja-za
  */
-public interface AdministrarDatos {
-    void insertar(Object p);    
+public interface AdministrarPagos {
+    void insertarVendedor(Usuario u);
+    void insertarVenta(Venta p);  
 }

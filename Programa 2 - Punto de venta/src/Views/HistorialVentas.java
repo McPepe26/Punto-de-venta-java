@@ -5,9 +5,12 @@
  */
 package Views;
 
+import Classes.DetalleVenta;
 import Classes.ManejadorBD;
+import Classes.Usuario;
 import Classes.Venta;
 import Interfaces.AdministrarDatos;
+import Interfaces.AdministrarPagos;
 import java.util.ArrayList;
 import java.util.Calendar;
 import javax.swing.table.DefaultTableModel;
@@ -16,11 +19,15 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author ja-za
  */
-public class HistorialVentas extends javax.swing.JDialog implements AdministrarDatos{
+public class HistorialVentas extends javax.swing.JDialog implements AdministrarDatos, AdministrarPagos{
 
     private DefaultTableModel model;
+    private DefaultTableModel modelPago;
     private ArrayList<Venta> ventas; 
     private ManejadorBD manejador;
+    private ArrayList<Usuario> vendedores;
+    private double total = 0;
+    
     /**
      * Creates new form HistorialVentas
      * @param parent
@@ -28,10 +35,16 @@ public class HistorialVentas extends javax.swing.JDialog implements AdministrarD
     public HistorialVentas(java.awt.Frame parent) {
         super(parent, true);
         initComponents();
-        model = new DefaultTableModel(new Object[]{"Fecha", "Vendedor", "Total de la venta"}, 0);
+        model = new DefaultTableModel(new Object[]{"Fecha", "Producto", "Cantidad", "Precio", "Vendedor", "Total"}, 0);
+        modelPago = new DefaultTableModel(new Object[]{"Fecha", "Clave", "Descripción", "Cantidad", "Precio", "Total"}, 0);
         tblContenido.setModel(model);
+        tblPagos.setModel(modelPago);
         ventas = new ArrayList<>();
         manejador = new ManejadorBD(this);
+        vendedores = new ArrayList<>();
+        
+        comboVendedores.addItem("Seleccionar");
+        manejador.consultarVendedores();
         
         setLocationRelativeTo(null);
     }
@@ -45,6 +58,8 @@ public class HistorialVentas extends javax.swing.JDialog implements AdministrarD
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jTabbedPane1 = new javax.swing.JTabbedPane();
+        jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblContenido = new javax.swing.JTable();
         fechaIni = new datechooser.beans.DateChooserCombo();
@@ -52,9 +67,24 @@ public class HistorialVentas extends javax.swing.JDialog implements AdministrarD
         jLabel2 = new javax.swing.JLabel();
         fechaFin = new datechooser.beans.DateChooserCombo();
         btnConsultar = new javax.swing.JButton();
+        jPanel2 = new javax.swing.JPanel();
+        jLabel3 = new javax.swing.JLabel();
+        comboVendedores = new javax.swing.JComboBox<>();
+        fechaInitPago = new datechooser.beans.DateChooserCombo();
+        jLabel4 = new javax.swing.JLabel();
+        fechaFinPago = new datechooser.beans.DateChooserCombo();
+        jLabel5 = new javax.swing.JLabel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        tblPagos = new javax.swing.JTable();
+        jLabel6 = new javax.swing.JLabel();
+        btnConsultarPago = new javax.swing.JButton();
+        lblTotal = new javax.swing.JLabel();
+        lblComision = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Historial de ventas");
+
+        jTabbedPane1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
 
         tblContenido.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -80,15 +110,15 @@ public class HistorialVentas extends javax.swing.JDialog implements AdministrarD
             }
         });
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1)
-                    .addGroup(layout.createSequentialGroup()
+                    .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(fechaIni, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -97,14 +127,13 @@ public class HistorialVentas extends javax.swing.JDialog implements AdministrarD
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(fechaFin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(26, 26, 26)
-                        .addComponent(btnConsultar, javax.swing.GroupLayout.DEFAULT_SIZE, 118, Short.MAX_VALUE)))
+                        .addComponent(btnConsultar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
         );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(0, 7, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(fechaIni, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING)
@@ -112,6 +141,132 @@ public class HistorialVentas extends javax.swing.JDialog implements AdministrarD
                     .addComponent(btnConsultar, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 342, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
+
+        jTabbedPane1.addTab("Historial", jPanel1);
+
+        jLabel3.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jLabel3.setText("Vendedor");
+
+        comboVendedores.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+
+        jLabel4.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jLabel4.setText("Periodo");
+
+        jLabel5.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jLabel5.setText("-");
+
+        tblPagos.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane2.setViewportView(tblPagos);
+
+        jLabel6.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel6.setText("Productos");
+
+        btnConsultarPago.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        btnConsultarPago.setText("Consultar");
+        btnConsultarPago.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnConsultarPagoActionPerformed(evt);
+            }
+        });
+
+        lblTotal.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        lblTotal.setText("Total: $#");
+
+        lblComision.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        lblComision.setText("Comisión(%%): $#");
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane2)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(jLabel3)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(comboVendedores, javax.swing.GroupLayout.PREFERRED_SIZE, 207, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(fechaInitPago, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel5)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(fechaFinPago, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(btnConsultarPago, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 15, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(lblTotal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(lblComision, javax.swing.GroupLayout.DEFAULT_SIZE, 317, Short.MAX_VALUE))))
+                .addContainerGap())
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(15, 15, 15)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(comboVendedores, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel4)))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(29, 29, 29)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel5)
+                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(fechaInitPago, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(fechaFinPago, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnConsultarPago))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 302, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lblTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lblComision, javax.swing.GroupLayout.DEFAULT_SIZE, 40, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        jTabbedPane1.addTab("Pago", jPanel2);
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jTabbedPane1)
+                .addContainerGap())
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jTabbedPane1)
+                .addContainerGap())
         );
 
         pack();
@@ -126,24 +281,81 @@ public class HistorialVentas extends javax.swing.JDialog implements AdministrarD
         dia2 = fechaFin.getCurrent().get(Calendar.DAY_OF_MONTH);
         mes2 = fechaFin.getCurrent().get(Calendar.MONTH);
         anio2 = fechaFin.getCurrent().get(Calendar.YEAR);
+        
+        while(model.getRowCount() > 0)
+            model.removeRow(0);
+        
         manejador.consultarVentas(mes+"-"+dia+"-"+anio, mes2+"-"+dia2+"-"+anio2);
     }//GEN-LAST:event_btnConsultarActionPerformed
+
+    private void btnConsultarPagoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConsultarPagoActionPerformed
+        int dia, mes, anio, dia2, mes2, anio2;
+        Usuario vendedor;
+        dia = fechaInitPago.getCurrent().get(Calendar.DAY_OF_MONTH);
+        mes = fechaInitPago.getCurrent().get(Calendar.MONTH);
+        anio = fechaInitPago.getCurrent().get(Calendar.YEAR);
+        
+        dia2 = fechaFinPago.getCurrent().get(Calendar.DAY_OF_MONTH);
+        mes2 = fechaFinPago.getCurrent().get(Calendar.MONTH);
+        anio2 = fechaFinPago.getCurrent().get(Calendar.YEAR);
+        while(modelPago.getRowCount() > 0)
+            modelPago.removeRow(0);
+        
+        total = 0;
+        if(comboVendedores.getSelectedIndex() != 0){
+            vendedor = vendedores.get(comboVendedores.getSelectedIndex()-1);
+            manejador.consultarVentasVendedor(mes+"-"+dia+"-"+anio, mes2+"-"+dia2+"-"+anio2, vendedor);
+            lblTotal.setText("Total: $"+total);
+            lblComision.setText("Comisión("+vendedor.getComision()+"): $"+(total*(vendedor.getComision()/100)));
+        }
+    }//GEN-LAST:event_btnConsultarPagoActionPerformed
 
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnConsultar;
+    private javax.swing.JButton btnConsultarPago;
+    private javax.swing.JComboBox<String> comboVendedores;
     private datechooser.beans.DateChooserCombo fechaFin;
+    private datechooser.beans.DateChooserCombo fechaFinPago;
     private datechooser.beans.DateChooserCombo fechaIni;
+    private datechooser.beans.DateChooserCombo fechaInitPago;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JLabel lblComision;
+    private javax.swing.JLabel lblTotal;
     private javax.swing.JTable tblContenido;
+    private javax.swing.JTable tblPagos;
     // End of variables declaration//GEN-END:variables
 
     @Override
     public void insertar(Object p) {
         ventas.add((Venta)p);
-        model.addRow(new Object[]{((Venta)p).getFechaToString(), ((Venta)p).getVendedor().getNombre(), ((Venta)p).calcularTotal()});
+        for(DetalleVenta d : ((Venta)p).getDetalles()){
+            model.addRow(new Object[]{((Venta)p).getFechaToString(), d.getProducto().getDescripcion(), d.getCantidad(), d.getProducto().getPrecio(), ((Venta)p).getVendedor().getNombre(), d.total()});
+        }
+    }
+
+    @Override
+    public void insertarVendedor(Usuario u) {
+        vendedores.add(u);
+        comboVendedores.addItem(u.getClave()+" - "+u.getNombre());
+    }
+
+    @Override
+    public void insertarVenta(Venta p) {
+        for(DetalleVenta d: p.getDetalles()){
+            modelPago.addRow(new Object[]{p.getFechaToString(), d.getProducto().getClave(), d.getProducto().getDescripcion(), d.getCantidad(), d.getProducto().getPrecio(), d.total()});
+        }
+        total += p.calcularTotal();
     }
 }

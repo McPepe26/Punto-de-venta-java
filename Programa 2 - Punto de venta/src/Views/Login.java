@@ -8,6 +8,8 @@ package Views;
 import Classes.ManejadorBD;
 import Classes.TextPrompt;
 import Classes.Usuario;
+import Interfaces.AdministrarVistas;
+import java.awt.Component;
 import java.awt.Font;
 import javax.swing.JOptionPane;
 
@@ -15,15 +17,16 @@ import javax.swing.JOptionPane;
  *
  * @author ja-za
  */
-public class Login extends javax.swing.JDialog {
+public class Login extends javax.swing.JFrame implements AdministrarVistas {
 
     private ManejadorBD manejador;
+
     /**
      * Creates new form Login
+     *
      * @param parent
      */
-    public Login(java.awt.Frame parent) {
-        super(parent, true);
+    public Login() {
         initComponents();
         TextPrompt placeholderUser = new TextPrompt("Nombre de usuario", txtUser);
         placeholderUser.changeAlpha(0.75f);
@@ -51,9 +54,12 @@ public class Login extends javax.swing.JDialog {
         btnLogin = new javax.swing.JButton();
         txtPass = new javax.swing.JPasswordField();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Iniciar sesión");
         addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosed(java.awt.event.WindowEvent evt) {
+                formWindowClosed(evt);
+            }
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 formWindowClosing(evt);
             }
@@ -116,27 +122,27 @@ public class Login extends javax.swing.JDialog {
             if (!String.valueOf(txtPass.getPassword()).equals("")) {
                 Usuario currentUser = manejador.login(txtUser.getText(), String.valueOf(txtPass.getPassword()));
                 setVisible(false);
-                if(currentUser != null){
-                    new Principal(currentUser).setVisible(true);
-                }else{
+                if (currentUser != null) {
+                    switch (currentUser.getRol()) {
+                        case 1:
+                            new Principal(this).mostrar(currentUser);
+                            break;
+                        case 0:
+                            new Administracion(this, currentUser).setVisible(true);
+                            break;
+                        default:
+                            setVisible(true);
+                            break;
+                    }
+                } else {
                     JOptionPane.showMessageDialog(this, "Usuario o contraseña erronea", "Datos incorrectos", JOptionPane.ERROR_MESSAGE);
                     setVisible(true);
                 }
-//                switch (currentUser.getRol()) {
-//                    case 2:
-//                        new Principal(currentUser).setVisible(true);
-//                        break;
-//                    case 1:
-//                        new Administracion(currentUser).setVisible(true);
-//                        break;
-//                    default:
-//                        setVisible(true);
-//                        break;
-//                }
-            }else{
+
+            } else {
                 JOptionPane.showMessageDialog(this, "Ingresa una contraseña", "Datos incorrectos", JOptionPane.ERROR_MESSAGE);
             }
-        }else{
+        } else {
             JOptionPane.showMessageDialog(this, "Ingresa tu nombre de usuario", "Datos incorrectos", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_btnLoginActionPerformed
@@ -144,6 +150,10 @@ public class Login extends javax.swing.JDialog {
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         System.exit(0);
     }//GEN-LAST:event_formWindowClosing
+
+    private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
+        System.exit(0);
+    }//GEN-LAST:event_formWindowClosed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -153,4 +163,12 @@ public class Login extends javax.swing.JDialog {
     private javax.swing.JPasswordField txtPass;
     private javax.swing.JTextField txtUser;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void mostrar(Component c) {
+        txtPass.setText("");
+        txtUser.setText("");
+        c.setVisible(false);
+        setVisible(true);
+    }
 }

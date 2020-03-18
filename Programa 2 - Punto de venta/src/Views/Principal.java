@@ -11,7 +11,9 @@ import Classes.Producto;
 import Classes.Usuario;
 import Classes.Venta;
 import Interfaces.AdministrarDatos;
+import Interfaces.AdministrarVistas;
 import Interfaces.ManageAyuda;
+import java.awt.Frame;
 import java.util.ArrayList;
 import java.util.Date;
 import javax.swing.JOptionPane;
@@ -28,27 +30,17 @@ public class Principal extends javax.swing.JFrame implements ManageAyuda, Admini
     private Venta venta;
     private Usuario vendedor;
     private ManejadorBD manejador;
+    private AdministrarVistas admin;
 
     /**
      * Creates new form Principal
      *
-     * @param currentUser
+     * @param parent
      */
-    public Principal(Usuario currentUser) {
+    public Principal(AdministrarVistas parent) {
         model = new DefaultTableModel(new Object[]{"Clave", "Descripción", "Precio unitario", "Cantidad", "Total"}, 0);
         initComponents();
-        
-        productos = new ArrayList<>();
-
-        vendedor = currentUser;
-        venta = new Venta(new Date(), vendedor, new ArrayList<>());
-        btnVender.setEnabled(false);
-
-        lblVendedor.setText("Vendedor: " + vendedor.getNombre());
-        manejador = new ManejadorBD(this);
-
-        manejador.consultarProductos();
-
+        admin = parent;
         setLocationRelativeTo(null);
     }
 
@@ -67,10 +59,14 @@ public class Principal extends javax.swing.JFrame implements ManageAyuda, Admini
         tblVenta = new javax.swing.JTable();
         lblTotal = new javax.swing.JLabel();
         btnVender = new javax.swing.JButton();
-        btnAdministrar = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Venta");
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
         txtClave.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         txtClave.addActionListener(new java.awt.event.ActionListener() {
@@ -96,14 +92,6 @@ public class Principal extends javax.swing.JFrame implements ManageAyuda, Admini
             }
         });
 
-        btnAdministrar.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        btnAdministrar.setText("Administrar");
-        btnAdministrar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnAdministrarActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -119,9 +107,7 @@ public class Principal extends javax.swing.JFrame implements ManageAyuda, Admini
                         .addContainerGap()
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 730, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(btnAdministrar, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(btnVender, javax.swing.GroupLayout.PREFERRED_SIZE, 176, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(lblTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE))))
@@ -139,11 +125,7 @@ public class Principal extends javax.swing.JFrame implements ManageAyuda, Admini
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lblTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(btnAdministrar, javax.swing.GroupLayout.DEFAULT_SIZE, 41, Short.MAX_VALUE)
-                        .addGap(6, 6, 6))
-                    .addComponent(btnVender, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(btnVender, javax.swing.GroupLayout.DEFAULT_SIZE, 47, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -226,14 +208,12 @@ public class Principal extends javax.swing.JFrame implements ManageAyuda, Admini
         JOptionPane.showMessageDialog(this, "Venta registrada");
     }//GEN-LAST:event_btnVenderActionPerformed
 
-    private void btnAdministrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAdministrarActionPerformed
-        new Administracion(vendedor).setVisible(true);
-        setVisible(false);
-    }//GEN-LAST:event_btnAdministrarActionPerformed
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        admin.mostrar(this);
+    }//GEN-LAST:event_formWindowClosing
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnAdministrar;
     private javax.swing.JButton btnVender;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblTotal;
@@ -242,6 +222,20 @@ public class Principal extends javax.swing.JFrame implements ManageAyuda, Admini
     private javax.swing.JTextField txtClave;
     // End of variables declaration//GEN-END:variables
 
+    public void mostrar(Usuario currentUser){
+        productos = new ArrayList<>();
+
+        vendedor = currentUser;
+        venta = new Venta(new Date(), vendedor, new ArrayList<>());
+        btnVender.setEnabled(false);
+
+        lblVendedor.setText("Vendedor: " + vendedor.getNombre());
+        manejador = new ManejadorBD(this);
+
+        manejador.consultarProductos();
+        setVisible(true);
+    }
+    
     @Override
     public void setProducto(int p) {
         txtClave.setText("" + productos.get(p).getClave());
@@ -252,5 +246,6 @@ public class Principal extends javax.swing.JFrame implements ManageAyuda, Admini
     public void insertar(Object p) {
         productos.add((Producto) p);
     }
+
 
 }

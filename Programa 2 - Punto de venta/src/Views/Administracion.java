@@ -6,6 +6,7 @@
 package Views;
 
 import Classes.Usuario;
+import Interfaces.AdministrarVistas;
 /**
  *
  * @author ja-za
@@ -13,13 +14,16 @@ import Classes.Usuario;
 public class Administracion extends javax.swing.JFrame {
 
     private Usuario admin;
+    private AdministrarVistas adminVistas;
     /**
      * Creates new form Administracion
+     * @param adminVistas
      * @param currentUser
      */
-    public Administracion(Usuario currentUser) {
+    public Administracion(AdministrarVistas adminVistas, Usuario currentUser) {
         initComponents();
         admin = currentUser;
+        this.adminVistas = adminVistas;
         setLocationRelativeTo(null);
     }
 
@@ -39,8 +43,13 @@ public class Administracion extends javax.swing.JFrame {
         jSeparator1 = new javax.swing.JSeparator();
         btnSalir = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Administración");
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Administración"));
 
@@ -120,7 +129,7 @@ public class Administracion extends javax.swing.JFrame {
     }//GEN-LAST:event_btnArticulosActionPerformed
 
     private void btnSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalirActionPerformed
-        
+        adminVistas.mostrar(this);
     }//GEN-LAST:event_btnSalirActionPerformed
 
     private void btnUsuariosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUsuariosActionPerformed
@@ -130,6 +139,10 @@ public class Administracion extends javax.swing.JFrame {
     private void btnHistorialActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHistorialActionPerformed
         new HistorialVentas(this).setVisible(true);
     }//GEN-LAST:event_btnHistorialActionPerformed
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        adminVistas.mostrar(this);
+    }//GEN-LAST:event_formWindowClosing
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
