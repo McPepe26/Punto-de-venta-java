@@ -30,6 +30,16 @@ CREATE TABLE DetalleVenta(
 	Cantidad INT
 );
 
+CREATE TABLE DetallePaquete(
+	Clave INT NOT NULL IDENTITY(1,1) PRIMARY KEY,
+	ClaveProducto INT NOT NULL FOREIGN KEY REFERENCES Productos(Clave),
+	ProductoPaquete INT NOT NULL FOREIGN KEY REFERENCES Productos(Clave),
+	Cantidad INT
+);
+
+ALTER TABLE Productos ADD Tipo INT;
+UPDATE Productos SET Tipo = 0;
+
 INSERT INTO Usuarios VALUES('Admon1', '12345', 0, 2000, 0);
 Select * From Usuarios
 DELETE FROM Usuarios
