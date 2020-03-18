@@ -43,7 +43,7 @@ public class ManejadorBD {
             ResultSet rs = st.executeQuery(sql);
             Producto p;
             while (rs.next()) {
-                p = new Producto(rs.getInt("Clave"), rs.getString("Descripcion"), rs.getDouble("Precio"), rs.getInt("Cantidad"));
+                p = new Producto(rs.getInt("Clave"), rs.getString("Descripcion"), rs.getDouble("Precio"), rs.getInt("Cantidad"), rs.getInt("Tipo"));
                 admin.insertar(p);
             }
         } catch (SQLException ex) {
@@ -99,13 +99,13 @@ public class ManejadorBD {
         }
     }
 
-    public void eliminarProducto(Producto nuevo) {
+    public void eliminarProducto(int clave) {
         Connection cn = Conexion.getConexion();
         String sql = "EliminarProducto ?";
 
         try {
             PreparedStatement pst = cn.prepareStatement(sql);
-            pst.setInt(1, nuevo.getClave());
+            pst.setInt(1, clave);
 
             int result = pst.executeUpdate();
 
@@ -284,7 +284,8 @@ public class ManejadorBD {
                                                    new Producto(rs2.getInt("idProducto"), 
                                                                 rs2.getString("Descripcion"), 
                                                                 rs2.getDouble("Precio"),
-                                                                rs2.getInt("CantidadProducto")), 
+                                                                rs2.getInt("CantidadProducto"),
+                                                                rs2.getInt("Tipo")), 
                                                     rs2.getInt("Cantidad")));
                 }
                 v.setDetalles(productos);
@@ -328,7 +329,8 @@ public class ManejadorBD {
                                                    new Producto(rs2.getInt("idProducto"), 
                                                                 rs2.getString("Descripcion"), 
                                                                 rs2.getDouble("Precio"),
-                                                                rs2.getInt("CantidadProducto")), 
+                                                                rs2.getInt("CantidadProducto"),
+                                                                rs2.getInt("Tipo")), 
                                                     rs2.getInt("Cantidad")));
                 }
                 v.setDetalles(productos);
@@ -353,6 +355,25 @@ public class ManejadorBD {
         } catch (SQLException ex) {
             Logger.getLogger(ManejadorBD.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    public void insertarPaquete(Paquete nuevo){
+        insertarProducto(nuevo);
+        for(DetallePaquete d : nuevo.getProductos()){
+            insertarDetallePaquete(d);
+        }
+    }
+    
+    public void modificarPaquete(Paquete mod){
+        modificarProducto(mod);
+        for(DetallePaquete d : mod.getProductos()){
+            modificarDetallePaquete(d);
+        }
+    }
+    
+    public void eliminarPaquete(int clave){
+        eliminarProducto(clave);
+        eliminarDetallePaquete(clave);
     }
     
     public void insertarDetallePaquete(DetallePaquete nueva) {
@@ -415,13 +436,6 @@ public class ManejadorBD {
             pst.setInt(1, clavePaquete);
 
             int result = pst.executeUpdate();
-
-            if (result > 0) {
-                JOptionPane.showMessageDialog(null, "Registro eliminado exitosamente");
-
-            } else {
-                JOptionPane.showMessageDialog(null, "No se pudo elimiar el registro");
-            }
         } catch (SQLException ex) {
             Logger.getLogger(ManejadorBD.class.getName()).log(Level.SEVERE, null, ex);
         }

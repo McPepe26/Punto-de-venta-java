@@ -16,7 +16,7 @@ public class Paquete extends Producto{
     private ArrayList<DetallePaquete> productos;
     
     public Paquete(int clave, String descripcion) {
-        super(clave, descripcion, 0, 0);
+        super(clave, descripcion, 0, 0, 1);
         productos = new ArrayList<>();
     }
 
@@ -38,6 +38,14 @@ public class Paquete extends Producto{
     
     public void eliminarProducto(int pos){
         productos.remove(pos);
+    }
+
+    public ArrayList<DetallePaquete> getProductos() {
+        return productos;
+    }
+
+    public void setProductos(ArrayList<DetallePaquete> productos) {
+        this.productos = productos;
     }
     
 }
