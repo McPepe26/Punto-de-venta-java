@@ -31,8 +31,8 @@ CREATE TABLE DetalleVenta(
 );
 
 CREATE TABLE DetallePaquete(
-	Clave INT NOT NULL IDENTITY(1,1) PRIMARY KEY,
-	ClaveProducto INT NOT NULL FOREIGN KEY REFERENCES Productos(Clave),
+	Clave INT NOT NULL PRIMARY KEY,
+	ClavePaquete INT NOT NULL FOREIGN KEY REFERENCES Productos(Clave),
 	ProductoPaquete INT NOT NULL FOREIGN KEY REFERENCES Productos(Clave),
 	Cantidad INT
 );
@@ -47,6 +47,7 @@ DELETE FROM Usuarios
 DROP DATABASE DBSales;
 
 drop TABLE DetalleVenta;
+drop TABLE DetallePaquete;
 drop table Ventas;
 drop table Usuarios;
 drop table Productos;
