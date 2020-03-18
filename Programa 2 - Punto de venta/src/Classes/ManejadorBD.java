@@ -15,7 +15,6 @@ import java.sql.Statement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -350,6 +349,78 @@ public class ManejadorBD {
             while (rs.next()) {
                 u = new Usuario(rs.getInt("Clave"), rs.getString("Usuario"), rs.getString("ClaveUser"), rs.getDouble("Salario"), rs.getDouble("Comision"), rs.getInt("Rol"));
                 adminPagos.insertarVendedor(u);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ManejadorBD.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void insertarDetallePaquete(DetallePaquete nueva) {
+        Connection cn = Conexion.getConexion();
+        String sql = "InsertarDetallePaquete ?,?,?,?";
+
+        try {
+            PreparedStatement pst = cn.prepareStatement(sql);
+            pst.setInt(1, nueva.getClave());
+            pst.setInt(2, nueva.getClavePaquete());
+            pst.setInt(3, nueva.getProductoPaquete());
+            pst.setInt(4, nueva.getCantidad());
+            pst.executeUpdate();
+        } catch (SQLException ex) {
+            Logger.getLogger(ManejadorBD.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void modificarDetallePaquete(DetallePaquete nueva) {
+        Connection cn = Conexion.getConexion();
+        String sql = "ModificarDetallePaquete ?,?,?,?";
+
+        try {
+            PreparedStatement pst = cn.prepareStatement(sql);
+            pst.setInt(1, nueva.getClave());
+            pst.setInt(2, nueva.getClavePaquete());
+            pst.setInt(3, nueva.getProductoPaquete());
+            pst.setInt(4, nueva.getCantidad());
+            pst.executeUpdate();
+        } catch (SQLException ex) {
+            Logger.getLogger(ManejadorBD.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public Paquete consultarDetallePaquete(int clavePaquete, Paquete paquete){
+        Connection cn = Conexion.getConexion();
+        String sql = "ConsultarDetallePaquete ?";
+
+        try {
+            PreparedStatement pst = cn.prepareStatement(sql);
+            pst.setInt(1, clavePaquete);
+            ResultSet rs = pst.executeQuery();
+            DetallePaquete d;
+            while (rs.next()) {
+                d = new DetallePaquete(rs.getInt("Clave"), rs.getInt("ClavePaquete"), rs.getInt("ProductoPaquete"), rs.getInt("Cantidad"));
+                paquete.agregarProducto(d);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ManejadorBD.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return paquete;
+    }
+    
+    public void eliminarDetallePaquete(int clavePaquete) {
+        Connection cn = Conexion.getConexion();
+        String sql = "EliminarDetallesPaquete ?";
+
+        try {
+            PreparedStatement pst = cn.prepareStatement(sql);
+            pst.setInt(1, clavePaquete);
+
+            int result = pst.executeUpdate();
+
+            if (result > 0) {
+                JOptionPane.showMessageDialog(null, "Registro eliminado exitosamente");
+
+            } else {
+                JOptionPane.showMessageDialog(null, "No se pudo elimiar el registro");
             }
         } catch (SQLException ex) {
             Logger.getLogger(ManejadorBD.class.getName()).log(Level.SEVERE, null, ex);
