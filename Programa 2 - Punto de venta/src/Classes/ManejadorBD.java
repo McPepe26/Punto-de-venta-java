@@ -43,7 +43,13 @@ public class ManejadorBD {
             ResultSet rs = st.executeQuery(sql);
             Producto p;
             while (rs.next()) {
-                p = new Producto(rs.getInt("Clave"), rs.getString("Descripcion"), rs.getDouble("Precio"), rs.getInt("Cantidad"), rs.getInt("Tipo"));
+                if(rs.getInt("Tipo") == 0){
+                    p = new Producto(rs.getInt("Clave"), rs.getString("Descripcion"), 
+                            rs.getDouble("Precio"), rs.getInt("Cantidad"), 
+                            rs.getInt("Tipo"));
+                }else{
+                    p = new Paquete(rs.getInt("Clave"), rs.getString("Descripcion"), rs.getDouble("Precio"));
+                }
                 admin.insertar(p);
             }
         } catch (SQLException ex) {
@@ -53,7 +59,7 @@ public class ManejadorBD {
 
     public void insertarProducto(Producto nuevo) {
         Connection cn = Conexion.getConexion();
-        String sql = "InsertarProducto ?,?,?,?";
+        String sql = "InsertarProducto ?,?,?,?,?";
 
         try {
             PreparedStatement pst = cn.prepareStatement(sql);
@@ -61,6 +67,7 @@ public class ManejadorBD {
             pst.setString(2, nuevo.getDescripcion());
             pst.setDouble(3, nuevo.getPrecio());
             pst.setInt(4, nuevo.getCantidad());
+            pst.setInt(5, nuevo.getTipo());
 
             int result = pst.executeUpdate();
 
@@ -77,7 +84,7 @@ public class ManejadorBD {
 
     public void modificarProducto(Producto nuevo) {
         Connection cn = Conexion.getConexion();
-        String sql = "ModificarProducto ?,?,?,?";
+        String sql = "ModificarProducto ?,?,?,?,?";
 
         try {
             PreparedStatement pst = cn.prepareStatement(sql);
@@ -85,6 +92,7 @@ public class ManejadorBD {
             pst.setString(2, nuevo.getDescripcion());
             pst.setDouble(3, nuevo.getPrecio());
             pst.setInt(4, nuevo.getCantidad());
+            pst.setInt(5, nuevo.getTipo());
 
             int result = pst.executeUpdate();
 
@@ -372,13 +380,14 @@ public class ManejadorBD {
     }
     
     public void eliminarPaquete(int clave){
-        eliminarProducto(clave);
         eliminarDetallePaquete(clave);
+        eliminarProducto(clave);
     }
     
     public void insertarDetallePaquete(DetallePaquete nueva) {
         Connection cn = Conexion.getConexion();
         String sql = "InsertarDetallePaquete ?,?,?,?";
+        System.out.println(nueva.getClavePaquete()+", "+nueva.getProductoPaquete());
 
         try {
             PreparedStatement pst = cn.prepareStatement(sql);
@@ -411,7 +420,7 @@ public class ManejadorBD {
     public Paquete consultarDetallePaquete(int clavePaquete, Paquete paquete){
         Connection cn = Conexion.getConexion();
         String sql = "ConsultarDetallePaquete ?";
-
+        paquete.vaciarLista();
         try {
             PreparedStatement pst = cn.prepareStatement(sql);
             pst.setInt(1, clavePaquete);
@@ -436,6 +445,36 @@ public class ManejadorBD {
             pst.setInt(1, clavePaquete);
 
             int result = pst.executeUpdate();
+        } catch (SQLException ex) {
+            Logger.getLogger(ManejadorBD.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void eliminarDetallePaquetePorId(int clave) {
+        Connection cn = Conexion.getConexion();
+        String sql = "EliminarDetallesPaquetePorId ?";
+
+        try {
+            PreparedStatement pst = cn.prepareStatement(sql);
+            pst.setInt(1, clave);
+
+            int result = pst.executeUpdate();
+        } catch (SQLException ex) {
+            Logger.getLogger(ManejadorBD.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void consultarPaquetes(){
+        try {
+            Connection cn = Conexion.getConexion();
+            String sql = "ConsultarPaquetes";
+            Statement st = cn.createStatement();
+            ResultSet rs = st.executeQuery(sql);
+            Producto p;
+            while (rs.next()) {
+                p = new Paquete(rs.getInt("Clave"), rs.getString("Descripcion"), rs.getDouble("Precio"));
+                admin.insertar(p);
+            }
         } catch (SQLException ex) {
             Logger.getLogger(ManejadorBD.class.getName()).log(Level.SEVERE, null, ex);
         }

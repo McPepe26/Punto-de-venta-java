@@ -23,9 +23,7 @@ public class DetallePaquete {
     }
 
     public DetallePaquete(int clavePaquete, int productoPaquete, int cantidad) {
-        this.clavePaquete = clavePaquete;
-        this.productoPaquete = productoPaquete;
-        this.cantidad = cantidad;
+        this(-1, clavePaquete, productoPaquete, cantidad);
     }
 
     public int getClave() {

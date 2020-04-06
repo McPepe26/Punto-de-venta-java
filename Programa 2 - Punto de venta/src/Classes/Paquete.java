@@ -15,13 +15,13 @@ public class Paquete extends Producto{
     
     private ArrayList<DetallePaquete> productos;
     
-    public Paquete(int clave, String descripcion) {
-        super(clave, descripcion, 0, 0, 1);
+    public Paquete(int clave, String descripcion, double precio) {
+        super(clave, descripcion, precio, 0, 1);
         productos = new ArrayList<>();
     }
 
-    public Paquete(String descripcion) {
-        this(-1, descripcion);
+    public Paquete(String descripcion, double precio) {
+        this(-1, descripcion, precio);
     }
     
     public void agregarProducto(DetallePaquete nuevo){
@@ -46,6 +46,12 @@ public class Paquete extends Producto{
 
     public void setProductos(ArrayList<DetallePaquete> productos) {
         this.productos = productos;
+    }
+    
+    public void vaciarLista(){
+        while(!productos.isEmpty()){
+            productos.remove(0);
+        }
     }
     
 }
